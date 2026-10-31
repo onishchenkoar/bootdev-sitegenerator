@@ -3,7 +3,7 @@ class HTMLNode:
         self,
         tag: str | None = None,
         value: str | None = None,
-        children: list["HTMLNode"] | None = None,
+        children = None,
         props: dict[str, str] | None = None
     ) -> None:
         self.tag = tag
@@ -27,7 +27,7 @@ class HTMLNode:
         value = "" if self.value is None else self.value
         children = "" if self.children is None else self.children
         props = "" if self.props is None else self.props
-        
+
         return (
             "HTMLNode(\n"
             f"    tag={tag},\n"
