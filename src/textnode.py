@@ -4,12 +4,12 @@ from leafnode import LeafNode
 
 
 class TextType(Enum):
-    TEXT = "text"
-    BOLD = "bold"
-    ITALIC = "italic"
-    CODE = "code"
-    LINK = "link"
-    IMAGE = "image"
+    TEXT = "TEXT"
+    BOLD = "BOLD"
+    ITALIC = "ITALIC"
+    CODE = "CODE"
+    LINK = "LINK"
+    IMAGE = "IMAGE"
 
 
 class TextNode:
@@ -26,7 +26,7 @@ class TextNode:
         )
 
     def __repr__(self):
-        return f"TextNode({self.text}, {self.text_type.value}, {self.url if self.url is not None else ""})"
+        return f'TextNode("{self.text}", TextType.{self.text_type.value}, {self.url if self.url is not None else ""})'
 
 
 def text_node_to_html_node(text_node: TextNode) -> LeafNode:
@@ -45,6 +45,3 @@ def text_node_to_html_node(text_node: TextNode) -> LeafNode:
             return LeafNode(tag="img", value="", props={"src": text_node.url, "alt": text_node.text})
         case _:
             raise TypeError(f"The node cannot be of the {text_node.text_type} type")
-            
-             
-        
