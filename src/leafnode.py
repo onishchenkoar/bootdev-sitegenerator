@@ -6,7 +6,7 @@ class LeafNode(HTMLNode):
         self,
         tag: str | None,
         value: str,
-        props: dict[str, str] | None = None
+        props: dict[str, str|None] | None = None
     ):
         super().__init__(tag, value, None, props)
 
