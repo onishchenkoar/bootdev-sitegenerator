@@ -112,3 +112,31 @@ def text_to_textnodes(text: str):
 
 def markdown_to_blocks(markdown):
     return [block.strip() for block in markdown.split("\n\n") if block]
+
+
+class BlockType(Enum):
+    PARAGRAPH = "PARAGRAPH"
+    HEADING = "HEADING"
+    CODE = "CODE"
+    QUOTE = "QUOTE"
+    UNORDERED_LIST = "UNORDERED_LIST"
+    ORDERED_LIST = "ORDERED_LIST"
+
+
+def block_to_block_type(markdown_block: str) -> BlockType:
+    lines = markdown_block.split("\n")
+    if re.fullmatch(r"^#{1,6} \w+", markdown_block, re.MULTILINE | re.DOTALL) is not None:
+        return BlockType.HEADING
+    elif re.fullmatch(r"^```.+?^```", markdown_block, re.MULTILINE | re.DOTALL):
+        return BlockType.CODE
+    elif all(line.startswith(">" for line in lines)):
+        return BlockType.QUOTE
+    elif all(line.startswith("- " for line in lines)):
+        return BlockType.UNORDERED_LIST
+    elif all(
+        re.match(r"^\d+?\. ", line) is not None and line.split(".", 1)[0] == str(i+1)
+        for i, line in enumerate(lines)
+    ):
+        return BlockType.ORDERED_LIST
+    else:
+        return BlockType.PARAGRAPH
