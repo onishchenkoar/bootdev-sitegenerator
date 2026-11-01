@@ -3,6 +3,7 @@ import os.path as op
 import shutil
 
 from textnode import markdown_to_html_node
+from pathlib import Path
 
 
 def copy_tree(source: str, destination: str):
@@ -36,7 +37,7 @@ def extract_title(markdown: str) -> str:
         raise Exception("No h1 header in the markdown text")
 
 
-def generate_page(from_path: str, template_path: str, dest_path: str):
+def generate_page(from_path: str, template_path: str, dest_path: str|Path):
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
     with open(from_path, "r") as f:
         markdown = f.read()
@@ -53,33 +54,25 @@ def generate_page(from_path: str, template_path: str, dest_path: str):
         f.write(full_html_page)
 
 
+def generate_pages_recursive(dir_path_content: str, template_path: str, dest_dir_path: str):
+    for each in os.listdir(dir_path_content):
+        new_source = op.join(dir_path_content, each)
+        new_dest = op.join(dest_dir_path, each)
+        if op.isfile(new_source):
+            extension = Path(new_source).suffix
+            if extension.lower() == ".md":
+                new_dest = Path(new_dest).with_suffix(".html")
+                generate_page(new_source, template_path, new_dest)
+        else:
+            os.makedirs(new_dest, exist_ok=True)
+            generate_pages_recursive(new_source, template_path, new_dest)
 
 def main():
     clean_directory_and_copy_files("static", "public")
-    generate_page(
-        from_path="content/index.md",
+    generate_pages_recursive(
+        dir_path_content="content",
         template_path="template.html",
-        dest_path="public/index.html"
-    )
-    generate_page(
-        from_path="content/contact/index.md",
-        template_path="template.html",
-        dest_path="public/contact/index.html"
-    )
-    generate_page(
-        from_path="content/blog/glorfindel/index.md",
-        template_path="template.html",
-        dest_path="public/blog/glorfindel/index.html"
-    )
-    generate_page(
-        from_path="content/blog/majesty/index.md",
-        template_path="template.html",
-        dest_path="public/blog/majesty/index.html"
-    )
-    generate_page(
-        from_path="content/blog/tom/index.md",
-        template_path="template.html",
-        dest_path="public/blog/tom/index.html"
+        dest_dir_path="public"
     )
 
 
