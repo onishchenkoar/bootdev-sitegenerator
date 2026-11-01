@@ -61,6 +61,26 @@ def main():
         template_path="template.html",
         dest_path="public/index.html"
     )
+    generate_page(
+        from_path="content/contact/index.md",
+        template_path="template.html",
+        dest_path="public/contact/index.html"
+    )
+    generate_page(
+        from_path="content/blog/glorfindel/index.md",
+        template_path="template.html",
+        dest_path="public/blog/glorfindel/index.html"
+    )
+    generate_page(
+        from_path="content/blog/majesty/index.md",
+        template_path="template.html",
+        dest_path="public/blog/majesty/index.html"
+    )
+    generate_page(
+        from_path="content/blog/tom/index.md",
+        template_path="template.html",
+        dest_path="public/blog/tom/index.html"
+    )
 
 
 if __name__ == "__main__":
