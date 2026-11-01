@@ -90,7 +90,6 @@ def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
             link_alt_and_links = extract_markdown_links(text_to_process)
             for link_alt, link in link_alt_and_links:
                 sections = text_to_process.split(f"[{link_alt}]({link})", 1)
-                print(sections)
                 if len(sections) == 2:
                     node_text, text_to_process = sections
                     new_nodes.append(TextNode(node_text, TextType.TEXT))
@@ -109,3 +108,7 @@ def text_to_textnodes(text: str):
     nodes = split_nodes_delimiter(nodes, "**", TextType.BOLD)
     nodes = split_nodes_delimiter(nodes, "_", TextType.ITALIC)
     return nodes
+
+
+def markdown_to_blocks(markdown):
+    return [block.strip() for block in markdown.split("\n\n") if block]
