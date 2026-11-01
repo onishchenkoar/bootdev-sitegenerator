@@ -1,3 +1,4 @@
+import re
 from enum import Enum
 
 from leafnode import LeafNode
@@ -45,3 +46,17 @@ def text_node_to_html_node(text_node: TextNode) -> LeafNode:
             return LeafNode(tag="img", value="", props={"src": text_node.url, "alt": text_node.text})
         case _:
             raise TypeError(f"The node cannot be of the {text_node.text_type} type")
+
+
+def extract_markdown_images(text: str) -> list[tuple[str, str]]:
+    pattern = r"!\[(.+?)\]\((.+?)\)"
+    return re.findall(pattern, text)
+
+
+def extract_markdown_links(text: str) -> list[tuple[str, str]]:
+    pattern = r"(?<!\!)\[(.+?)\]\((.+?)\)"
+    return re.findall(pattern, text)
+
+text = "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)"
+print(extract_markdown_links(text))
+# [("to boot dev", "https://www.boot.dev"), ("to youtube", "https://www.youtube.com/@bootdotdev")]
