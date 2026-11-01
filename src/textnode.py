@@ -1,5 +1,5 @@
-import re
 from enum import Enum
+import re
 
 from leafnode import LeafNode
 from htmlnode import HTMLNode
@@ -169,7 +169,7 @@ class BlockType(Enum):
 
 def block_to_block_type(markdown_block: str) -> BlockType:
     lines = markdown_block.split("\n")
-    if re.fullmatch(r"^#{1,6} \w+", markdown_block, re.MULTILINE | re.DOTALL) is not None:
+    if re.fullmatch(r"^#{1,6} .+", markdown_block, re.MULTILINE | re.DOTALL) is not None:
         return BlockType.HEADING
     elif re.fullmatch(r"^```.+?```", markdown_block, re.MULTILINE | re.DOTALL):
         return BlockType.CODE
@@ -203,35 +203,36 @@ def md_block_to_html_heading(text):
     block_text = text.lstrip("# ")
     return ParentNode(
         tag=f"h{text[:6].count("#")}",
-        value=text_to_children(block_text)
+        children=text_to_children(block_text)
     )
 
 
 def md_block_to_html_quote(text):
     block_text = " ".join(line.strip() for line in text.split("\n>"))
+    block_text = block_text.lstrip("> ")
     return ParentNode(
         tag="blockquote",
-        value=text_to_children(block_text)
+        children=text_to_children(block_text)
     )
 
 
 def md_block_to_html_unordered_list(text):
     line_nodes = []
     for line in text.split("\n-"):
-        line_children = text_to_children(line.strip())
-        line_nodes.append(ParentNode(tag="li"), children=line_children)
+        line_children = text_to_children(line.lstrip("-").strip())
+        line_nodes.append(ParentNode(tag="li", children=line_children))
     return ParentNode(
         tag="ul",
         children=line_nodes
     )
 
 
-def md_block_to_html_unordered_list(text):
+def md_block_to_html_ordered_list(text):
     line_nodes = []
     for line in text.split("\n"):
         line = line.split(".", 1)[1].strip()
         line_children = text_to_children(line)
-        line_nodes.append(ParentNode(tag="li"), children=line_children)
+        line_nodes.append(ParentNode(tag="li", children=line_children))
     return ParentNode(
         tag="ol",
         children=line_nodes
@@ -265,4 +266,5 @@ def markdown_to_html_node(markdown):
                 children.append(md_block_to_html_unordered_list(block_text))
             case BlockType.ORDERED_LIST:
                 children.append(md_block_to_html_ordered_list(block_text))
+    # print(children)
     return ParentNode(tag="div", children=children)

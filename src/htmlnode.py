@@ -30,8 +30,8 @@ class HTMLNode:
 
         return (
             f"{self.__class__.__name__}(\n"
-            f"    tag={tag},\n"
-            f"    value={value},\n"
+            f"    tag=\"{tag}\",\n"
+            f"    value=\"{value}\",\n"
             f"    children={children},\n"
             f"    props={props}\n"
             ")"
