@@ -57,6 +57,48 @@ def extract_markdown_links(text: str) -> list[tuple[str, str]]:
     pattern = r"(?<!\!)\[(.+?)\]\((.+?)\)"
     return re.findall(pattern, text)
 
-text = "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)"
-print(extract_markdown_links(text))
-# [("to boot dev", "https://www.boot.dev"), ("to youtube", "https://www.youtube.com/@bootdotdev")]
+
+def split_nodes_image(old_nodes: list[TextNode]) -> list[TextNode]:
+    new_nodes = []
+
+    for old_node in old_nodes:
+        if old_node.text_type != TextType.TEXT:
+            new_nodes.append(old_node)
+        else:
+            text_to_process = old_node.text
+            image_alt_and_links = extract_markdown_images(text_to_process)
+            for image_alt, image_link in image_alt_and_links:
+                sections = text_to_process.split(f"![{image_alt}]({image_link})", 1)
+                if len(sections) == 2:
+                    node_text, text_to_process = sections
+                    new_nodes.append(TextNode(node_text, TextType.TEXT))
+                    new_nodes.append(TextNode(image_alt, TextType.IMAGE, image_link))
+                if len(sections) == 1:
+                    new_nodes.append(TextNode(image_alt, TextType.IMAGE, image_link))
+                    text_to_process = sections[0]
+    return new_nodes
+
+
+def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
+    new_nodes = []
+
+    for old_node in old_nodes:
+        if old_node.text_type != TextType.TEXT:
+            new_nodes.append(old_node)
+        else:
+            text_to_process = old_node.text
+            link_alt_and_links = extract_markdown_links(text_to_process)
+            for link_alt, link in link_alt_and_links:
+                sections = text_to_process.split(f"[{link_alt}]({link})", 1)
+                print(sections)
+                if len(sections) == 2:
+                    node_text, text_to_process = sections
+                    new_nodes.append(TextNode(node_text, TextType.TEXT))
+                    new_nodes.append(TextNode(link_alt, TextType.LINK, link))
+                if len(sections) == 1:
+                    new_nodes.append(TextNode(link_alt, TextType.LINK, link))
+                    text_to_process = sections[0]
+    return new_nodes
+
+
+def text_to_textnodes(text: str):

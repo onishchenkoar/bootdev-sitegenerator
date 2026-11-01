@@ -40,7 +40,3 @@ def split_nodes_delimiter(
                 new_nodes.append(TextNode(old_node.text[search_start_index:], TextType.TEXT))
 
     return new_nodes
-
-node = TextNode("This is text with a `code block` word", TextType.TEXT)
-new_nodes = split_nodes_delimiter([node], "`", TextType.CODE)
-print(new_nodes)
