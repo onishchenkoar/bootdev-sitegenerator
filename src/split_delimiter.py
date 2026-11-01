@@ -8,11 +8,6 @@ def split_nodes_delimiter(
 ) -> list[TextNode]:
 
     new_nodes = []
-    wrapped_text_type = {
-        "**": TextType.BOLD,
-        "_": TextType.ITALIC,
-        "`": TextType.CODE,
-    }[delimiter]
 
     for old_node in old_nodes:
         if old_node.text_type != TextType.TEXT:
@@ -34,7 +29,7 @@ def split_nodes_delimiter(
                 if preceding_text:
                     new_nodes.append(TextNode(preceding_text, TextType.TEXT))
                 content = old_node.text[starting_content_index: finishing_content_index]
-                new_nodes.append(TextNode(content, wrapped_text_type))
+                new_nodes.append(TextNode(content, text_type))
 
             if search_start_index != len(old_node.text):
                 new_nodes.append(TextNode(old_node.text[search_start_index:], TextType.TEXT))
