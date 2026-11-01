@@ -29,7 +29,7 @@ class HTMLNode:
         props = "" if self.props is None else self.props
 
         return (
-            "HTMLNode(\n"
+            f"{self.__class__.__name__}(\n"
             f"    tag={tag},\n"
             f"    value={value},\n"
             f"    children={children},\n"
